@@ -10,10 +10,11 @@ _LOCAL_BACKEND = os.path.join(_ROOT, "backend")
 if os.path.isfile(os.path.join(_LOCAL_BACKEND, "main.py")):
     _BACKEND_PATH = _LOCAL_BACKEND
 else:
-    _TMP_REPO = "/tmp/xyvora_ai_src"
+    ref = os.environ.get("XYVORA_GIT_REF", "arena/193fdff4-xyvora-ai")
+    safe_tag = "".join(c if c.isalnum() else "_" for c in ref)[:40]
+    _TMP_REPO = f"/tmp/xyvora_v2_{safe_tag}"
     _BACKEND_PATH = os.path.join(_TMP_REPO, "backend")
-    if not os.path.isfile(os.path.join(_BACKEND_PATH, "main.py")):
-        ref = os.environ.get("XYVORA_GIT_REF", "arena/193fdff4-xyvora-ai")
+    if not os.path.isfile(os.path.join(_BACKEND_PATH, "security.py")):
         url = f"https://codeload.github.com/Coder97234/Xyvora-Ai/tar.gz/{ref}"
         with urllib.request.urlopen(url, timeout=15) as resp:
             raw = resp.read()
