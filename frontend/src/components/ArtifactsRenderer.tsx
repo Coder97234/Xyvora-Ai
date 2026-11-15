@@ -14,6 +14,7 @@ import {
   ChatArtifact,
   CodeExecutionArtifact,
   FunctionPlotArtifact,
+  GeneratedImageArtifact,
 } from "../types";
 import { api } from "../api";
 
@@ -504,6 +505,30 @@ export const ArtifactsList: React.FC<{
               title={art.title}
               onTasksChanged={onTasksChanged}
             />
+          );
+        }
+        if (art.type === "generated_image") {
+          const imgArt = art as GeneratedImageArtifact;
+          return (
+            <div
+              key={i}
+              className="mt-3 rounded-xl border border-fuchsia-500/30 bg-slate-950/90 p-3.5 shadow-lg"
+            >
+              <div className="flex items-center justify-between gap-2 mb-2">
+                <span className="text-xs font-semibold text-fuchsia-200">{imgArt.title}</span>
+                <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-fuchsia-500/20 border border-fuchsia-400/40 text-fuchsia-200">
+                  AI-Generated ({imgArt.provider})
+                </span>
+              </div>
+              <img
+                src={imgArt.image_url}
+                alt={imgArt.prompt}
+                className="w-full max-w-md rounded-lg border border-slate-800 object-cover"
+              />
+              {imgArt.revised_prompt && (
+                <p className="mt-2 text-[11px] text-slate-400 italic">{imgArt.revised_prompt}</p>
+              )}
+            </div>
           );
         }
         return null;

@@ -6,9 +6,12 @@ import {
   Circle,
   Code2,
   FileText,
+  Image,
   ListTodo,
   Play,
   Plus,
+  RefreshCw,
+  Search,
   Trash2,
   Upload,
 } from "lucide-react";
@@ -72,7 +75,7 @@ export const SandboxTools: React.FC<SandboxToolsProps> = ({
   initialCode,
   onRefreshVitals,
 }) => {
-  const [subTab, setSubTab] = useState<"python" | "math" | "vault" | "tasks">("python");
+  const [subTab, setSubTab] = useState<"python" | "math" | "vault" | "images" | "tasks">("python");
 
   // Python Sandbox state
   const [pyCode, setPyCode] = useState(initialCode || PYTHON_TEMPLATES[0].code);
@@ -99,7 +102,19 @@ export const SandboxTools: React.FC<SandboxToolsProps> = ({
   const [docs, setDocs] = useState<KnowledgeDoc[]>([]);
   const [docTitle, setDocTitle] = useState("");
   const [docContent, setDocContent] = useState("");
+  const [docCollection, setDocCollection] = useState("general");
+  const [docSearchQ, setDocSearchQ] = useState("");
   const [docBusy, setDocBusy] = useState(false);
+  const [docMsg, setDocMsg] = useState<string | null>(null);
+  const [selectedDocDetail, setSelectedDocDetail] = useState<{
+    title: string;
+    chunks: { id: string; chunk_index: number; section_label: string; content: string }[];
+  } | null>(null);
+
+  // Image Studio state
+  const [imgPrompt, setImgPrompt] = useState("Futuristic orbital research observatory overlooking neon aurora clouds");
+  const [imgBusy, setImgBusy] = useState(false);
+  const [imgRes, setImgRes] = useState<{ ok: boolean; image_url?: string; error?: string; provider?: string } | null>(null);
 
   // Tasks state
   const [tasks, setTasks] = useState<AgentTask[]>([]);
@@ -147,11 +162,15 @@ export const SandboxTools: React.FC<SandboxToolsProps> = ({
     e.preventDefault();
     if (!docTitle.trim() || !docContent.trim()) return;
     setDocBusy(true);
+    setDocMsg(null);
     try {
-      await api.createDocument(docTitle, docContent);
+      await api.createDocument(docTitle, docContent, docCollection);
       setDocTitle("");
       setDocContent("");
+      setDocMsg("Document chunked & indexed into Knowledge Vault.");
       await refreshLabData();
+    } catch (err: any) {
+      setDocMsg(err.message);
     } finally {
       setDocBusy(false);
     }
@@ -161,12 +180,28 @@ export const SandboxTools: React.FC<SandboxToolsProps> = ({
     const file = e.target.files?.[0];
     if (!file) return;
     setDocBusy(true);
+    setDocMsg(null);
     try {
-      await api.uploadDocumentFile(file);
+      const uploaded = await api.uploadDocumentFile(file, docCollection);
+      setDocMsg(`Indexed '${uploaded.title}' (${uploaded.chunk_count} semantic chunks).`);
       await refreshLabData();
+    } catch (err: any) {
+      setDocMsg(err.message || "Document upload failed");
     } finally {
       setDocBusy(false);
       e.target.value = "";
+    }
+  };
+
+  const handleGenerateImg = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!imgPrompt.trim()) return;
+    setImgBusy(true);
+    try {
+      const res = await api.generateImage(imgPrompt);
+      setImgRes(res);
+    } finally {
+      setImgBusy(false);
     }
   };
 
@@ -191,9 +226,10 @@ export const SandboxTools: React.FC<SandboxToolsProps> = ({
 
         <div className="flex flex-wrap items-center gap-1.5 bg-slate-900/90 p-1 rounded-xl border border-slate-800">
           {[
-            { id: "python", label: "Python Sandbox", icon: Code2 },
-            { id: "math", label: "Symbolic Math", icon: Calculator },
+            { id: "python", label: "Python Lab", icon: Code2 },
+            { id: "math", label: "Math Studio", icon: Calculator },
             { id: "vault", label: `Knowledge Vault (${docs.length})`, icon: BookOpen },
+            { id: "images", label: "Image Studio", icon: Image },
             { id: "tasks", label: `Task Board (${tasks.filter((t) => t.status !== "done").length})`, icon: ListTodo },
           ].map((item) => {
             const Icon = item.icon;
@@ -349,23 +385,38 @@ export const SandboxTools: React.FC<SandboxToolsProps> = ({
               <span className="text-sm font-semibold text-white">Ingest Knowledge Document</span>
               <label className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-xl bg-indigo-500/20 hover:bg-indigo-500/30 border border-indigo-400/40 text-indigo-200 cursor-pointer transition">
                 <Upload className="w-3.5 h-3.5" />
-                Upload .txt / .md / .csv
+                Upload PDF / DOCX / XLSX / PPTX / CSV / Code
                 <input
                   type="file"
-                  accept=".txt,.md,.csv,.json,.py,.ts"
+                  accept=".pdf,.docx,.xlsx,.pptx,.txt,.md,.csv,.json,.py,.ts,.tsx,.js,.html,.css,.java,.cpp,.cs,.luau"
                   onChange={handleFileUpload}
                   className="hidden"
                 />
               </label>
             </div>
+            {docMsg && (
+              <div className="p-2 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-[11px] text-cyan-200">{docMsg}</div>
+            )}
             <form onSubmit={handleIngestNote} className="space-y-2.5">
-              <input
-                type="text"
-                value={docTitle}
-                onChange={(e) => setDocTitle(e.target.value)}
-                placeholder="Document Title (e.g., 'Orbital Telemetry Protocol')"
-                className="w-full rounded-xl bg-slate-900 border border-slate-700 px-3 py-2 text-xs text-white focus:border-cyan-400 focus:outline-none"
-              />
+              <div className="grid grid-cols-3 gap-2">
+                <input
+                  type="text"
+                  value={docTitle}
+                  onChange={(e) => setDocTitle(e.target.value)}
+                  placeholder="Document Title"
+                  className="col-span-2 rounded-xl bg-slate-900 border border-slate-700 px-3 py-2 text-xs text-white focus:border-cyan-400 focus:outline-none"
+                />
+                <select
+                  value={docCollection}
+                  onChange={(e) => setDocCollection(e.target.value)}
+                  className="rounded-xl bg-slate-900 border border-slate-700 px-2.5 py-2 text-xs text-slate-200"
+                >
+                  <option value="general">Collection: General</option>
+                  <option value="architecture">Architecture</option>
+                  <option value="research">Research</option>
+                  <option value="engineering">Engineering</option>
+                </select>
+              </div>
               <textarea
                 rows={6}
                 value={docContent}
@@ -384,8 +435,22 @@ export const SandboxTools: React.FC<SandboxToolsProps> = ({
           </div>
 
           <div className="glass-panel rounded-2xl p-4 space-y-3">
-            <div className="text-sm font-semibold text-white">
-              Indexed RAG Corpus ({docs.length} Documents)
+            <div className="flex items-center justify-between gap-2">
+              <div className="text-sm font-semibold text-white">Indexed RAG Corpus ({docs.length})</div>
+              <div className="relative">
+                <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2" />
+                <input
+                  type="text"
+                  value={docSearchQ}
+                  onChange={async (e) => {
+                    const v = e.target.value;
+                    setDocSearchQ(v);
+                    setDocs(await api.listDocuments({ q: v || undefined }));
+                  }}
+                  placeholder="Filter vault..."
+                  className="pl-7 pr-2.5 py-1 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white"
+                />
+              </div>
             </div>
             <div className="space-y-2.5 max-h-80 overflow-y-auto">
               {docs.map((d) => (
@@ -394,14 +459,33 @@ export const SandboxTools: React.FC<SandboxToolsProps> = ({
                   className="p-3 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1.5"
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs font-semibold text-cyan-200 flex items-center gap-1.5">
-                      <FileText className="w-3.5 h-3.5 text-cyan-400" />
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        const det = await api.getDocumentDetail(d.id);
+                        setSelectedDocDetail({ title: det.title, chunks: det.chunks });
+                      }}
+                      className="text-xs font-semibold text-cyan-200 hover:underline flex items-center gap-1.5 text-left"
+                    >
+                      <FileText className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
                       {d.title}
-                    </span>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10.5px] font-mono text-slate-400">
-                        {d.chunk_count} chunks
+                    </button>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300">
+                        {d.collection || "general"}
                       </span>
+                      <span className="text-[10.5px] font-mono text-slate-400">{d.chunk_count} chunks</span>
+                      <button
+                        type="button"
+                        title="Re-index document chunks"
+                        onClick={async () => {
+                          await api.reindexDocument(d.id);
+                          await refreshLabData();
+                        }}
+                        className="text-slate-400 hover:text-cyan-300"
+                      >
+                        <RefreshCw className="w-3.5 h-3.5" />
+                      </button>
                       <button
                         type="button"
                         onClick={async () => {
@@ -414,13 +498,74 @@ export const SandboxTools: React.FC<SandboxToolsProps> = ({
                       </button>
                     </div>
                   </div>
-                  {d.preview && (
-                    <p className="text-[11.5px] text-slate-400 line-clamp-2">{d.preview}</p>
-                  )}
+                  {d.preview && <p className="text-[11.5px] text-slate-400 line-clamp-2">{d.preview}</p>}
                 </div>
               ))}
             </div>
+
+            {selectedDocDetail && (
+              <div className="pt-3 border-t border-slate-800 space-y-2 max-h-56 overflow-y-auto">
+                <div className="flex items-center justify-between text-xs font-bold text-indigo-300">
+                  <span>Indexed Chunks: {selectedDocDetail.title}</span>
+                  <button type="button" onClick={() => setSelectedDocDetail(null)} className="text-slate-400">
+                    Close
+                  </button>
+                </div>
+                {selectedDocDetail.chunks.map((ch) => (
+                  <div key={ch.id} className="p-2 rounded-lg bg-slate-950 border border-slate-800 text-[11px]">
+                    <div className="font-mono text-cyan-300">
+                      [{ch.section_label || `Chunk #${ch.chunk_index + 1}`}]
+                    </div>
+                    <div className="text-slate-300 mt-0.5">{ch.content}</div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
+        </div>
+      )}
+
+      {/* IMAGE STUDIO */}
+      {subTab === "images" && (
+        <div className="glass-panel rounded-2xl p-5 space-y-4">
+          <div>
+            <h3 className="text-sm font-bold text-white">AI Image Generation Studio</h3>
+            <p className="text-xs text-slate-400">
+              Connects to your configured OpenAI (`dall-e-3`) or compatible `/images/generations` provider. Generated assets are explicitly labeled as AI-Generated.
+            </p>
+          </div>
+          <form onSubmit={handleGenerateImg} className="flex gap-2">
+            <input
+              type="text"
+              value={imgPrompt}
+              onChange={(e) => setImgPrompt(e.target.value)}
+              placeholder="Describe the image to generate..."
+              className="flex-1 rounded-xl bg-slate-900 border border-slate-700 px-3.5 py-2 text-xs text-white"
+            />
+            <button
+              type="submit"
+              disabled={imgBusy}
+              className="px-4 py-2 rounded-xl bg-gradient-to-r from-fuchsia-500 to-indigo-500 text-white font-bold text-xs disabled:opacity-50"
+            >
+              {imgBusy ? "Generating..." : "Generate Image"}
+            </button>
+          </form>
+          {imgRes && (
+            <div>
+              {imgRes.ok && imgRes.image_url ? (
+                <div className="p-3 rounded-xl bg-slate-900 border border-fuchsia-500/35 max-w-md space-y-2">
+                  <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-fuchsia-500/20 text-fuchsia-200">
+                    AI-Generated ({imgRes.provider})
+                  </span>
+                  <img src={imgRes.image_url} alt={imgPrompt} className="rounded-lg w-full" />
+                </div>
+              ) : (
+                <div className="p-3 rounded-xl bg-amber-500/15 border border-amber-500/35 text-xs text-amber-200">
+                  {imgRes.error || "Configure an OpenAI API key in Settings → AI Providers to enable neural image generation."}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
 

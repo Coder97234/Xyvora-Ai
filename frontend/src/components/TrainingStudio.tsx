@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import {
   Activity,
+  CheckCircle2,
   Cpu,
+  Download,
   GraduationCap,
+  Info,
   Layers,
   Plus,
-  Sparkles,
   Trash2,
+  Upload,
   Zap,
 } from "lucide-react";
 import { api } from "../api";
@@ -34,6 +37,37 @@ export const TrainingStudio: React.FC<TrainingStudioProps> = ({ onRefreshVitals 
   // Add custom skill form
   const [skillTrigger, setSkillTrigger] = useState("");
   const [skillResponse, setSkillResponse] = useState("");
+  const [validationMsg, setValidationMsg] = useState<string | null>(null);
+  const [showMatrix, setShowMatrix] = useState(false);
+
+  const handleValidateDataset = async () => {
+    const res = await api.validateDataset();
+    setValidationMsg(
+      `Dataset Valid=${res.valid} • ${res.total_samples} samples across ${res.intent_count} intents • ${res.duplicate_count} duplicates` +
+        (res.warnings.length ? ` • Warnings: ${res.warnings.join("; ")}` : "")
+    );
+  };
+
+  const handleExportDataset = async () => {
+    const data = await api.exportDataset();
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "xyvora-intent-dataset.json";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImportDataset = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const raw = JSON.parse(await file.text());
+    const samples = Array.isArray(raw) ? raw : raw.samples || [];
+    const res = await api.importDataset(samples, false);
+    setValidationMsg(`Imported ${res.imported} labeled utterances and retrained intent router.`);
+    await loadStats();
+  };
 
   const loadStats = async () => {
     const s = await api.getNeuralStats();
@@ -123,26 +157,62 @@ export const TrainingStudio: React.FC<TrainingStudioProps> = ({ onRefreshVitals 
         <div>
           <h2 className="text-lg font-bold text-white flex items-center gap-2">
             <Cpu className="w-5 h-5 text-indigo-400" />
-            Live Neural Cortex & Backpropagation Training Studio
+            Intent Routing Classifier Training Studio
           </h2>
           <p className="text-xs text-slate-400 mt-0.5">
-            Probe live softmax intent activations, teach new behaviors, and retrain Xyvora's Multi-Layer Perceptron in real time.
+            Train, validate, and benchmark Xyvora's 2-Layer Adam MLP intent router with stratified cross-validation metrics.
           </p>
         </div>
-        <button
-          type="button"
-          disabled={retraining}
-          onClick={handleRetrain}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-400 hover:to-cyan-400 disabled:opacity-50 text-slate-950 font-bold text-xs shadow-lg transition"
-        >
-          <Zap className={`w-4 h-4 ${retraining ? "animate-spin" : ""}`} />
-          {retraining ? "Running Backpropagation..." : "Retrain Neural Cortex"}
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={handleValidateDataset}
+            className="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-cyan-200 flex items-center gap-1"
+          >
+            <CheckCircle2 className="w-3.5 h-3.5" /> Validate Dataset
+          </button>
+          <button
+            type="button"
+            onClick={handleExportDataset}
+            className="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-slate-200 flex items-center gap-1"
+          >
+            <Download className="w-3.5 h-3.5" /> Export JSON
+          </button>
+          <label className="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-indigo-200 flex items-center gap-1 cursor-pointer">
+            <Upload className="w-3.5 h-3.5" /> Import JSON
+            <input type="file" accept=".json" onChange={handleImportDataset} className="hidden" />
+          </label>
+          <button
+            type="button"
+            disabled={retraining}
+            onClick={handleRetrain}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-400 hover:to-cyan-400 disabled:opacity-50 text-slate-950 font-bold text-xs shadow-lg transition"
+          >
+            <Zap className={`w-4 h-4 ${retraining ? "animate-spin" : ""}`} />
+            {retraining ? "Training Router..." : "Retrain Intent Router"}
+          </button>
+        </div>
       </div>
+
+      {/* Honest Scope Banner */}
+      <div className="p-3 rounded-xl bg-indigo-500/10 border border-indigo-400/30 text-xs text-indigo-200 flex items-start gap-2">
+        <Info className="w-4 h-4 shrink-0 mt-0.5 text-indigo-400" />
+        <div>
+          <strong>Scope Transparency:</strong>{" "}
+          {stats?.scope_disclaimer ||
+            "This studio trains Xyvora's fast local TF-IDF + 2-Layer MLP Intent & Tool Routing Classifier (~sub-5ms inference). It routes queries to tools and subsystems—it does NOT modify or fine-tune external Large Language Model weights."}
+        </div>
+      </div>
+
+      {validationMsg && (
+        <div className="p-2.5 rounded-xl bg-emerald-500/15 border border-emerald-500/35 text-xs text-emerald-200">
+          {validationMsg}
+        </div>
+      )}
 
       {/* Telemetry Stat Cards */}
       {stats && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
           <div className="glass-panel rounded-xl p-3.5">
             <div className="text-[11px] text-slate-400">Trainable Parameters</div>
             <div className="text-xl font-bold text-cyan-300 font-mono mt-0.5">
@@ -151,7 +221,7 @@ export const TrainingStudio: React.FC<TrainingStudioProps> = ({ onRefreshVitals 
             <div className="text-[10.5px] text-slate-500 mt-0.5">{stats.feature_dim} TF-IDF dims</div>
           </div>
           <div className="glass-panel rounded-xl p-3.5">
-            <div className="text-[11px] text-slate-400">Training / CV Accuracy</div>
+            <div className="text-[11px] text-slate-400">Train / 3-Fold CV</div>
             <div className="text-xl font-bold text-emerald-300 font-mono mt-0.5">
               {(stats.training_accuracy * 100).toFixed(1)}%{" "}
               <span className="text-xs text-slate-400">/ {(stats.cv_accuracy * 100).toFixed(0)}%</span>
@@ -161,7 +231,22 @@ export const TrainingStudio: React.FC<TrainingStudioProps> = ({ onRefreshVitals 
             </div>
           </div>
           <div className="glass-panel rounded-xl p-3.5">
-            <div className="text-[11px] text-slate-400">Cognitive Intents</div>
+            <div className="text-[11px] text-slate-400">Macro P / R / F1</div>
+            <div className="text-sm font-bold text-cyan-200 font-mono mt-1.5">
+              {((stats.precision_macro ?? stats.cv_accuracy) * 100).toFixed(0)}% /{" "}
+              {((stats.recall_macro ?? stats.cv_accuracy) * 100).toFixed(0)}% /{" "}
+              {((stats.f1_macro ?? stats.cv_accuracy) * 100).toFixed(0)}%
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowMatrix((s) => !s)}
+              className="text-[10.5px] text-cyan-400 underline mt-1"
+            >
+              {showMatrix ? "Hide Confusion Matrix" : "View Matrix & Per-Class"}
+            </button>
+          </div>
+          <div className="glass-panel rounded-xl p-3.5">
+            <div className="text-[11px] text-slate-400">Routing Intents</div>
             <div className="text-xl font-bold text-indigo-300 font-mono mt-0.5">
               {stats.intent_count}
             </div>
@@ -176,6 +261,39 @@ export const TrainingStudio: React.FC<TrainingStudioProps> = ({ onRefreshVitals 
             </div>
             <div className="text-[10.5px] text-slate-500 mt-0.5">{stats.training_ms} ms fit time</div>
           </div>
+        </div>
+      )}
+
+      {showMatrix && stats?.per_class_metrics && (
+        <div className="glass-panel rounded-2xl p-4 space-y-3">
+          <div className="text-xs font-bold text-cyan-300 uppercase tracking-wider">
+            Out-of-Fold Per-Intent Precision, Recall & F1 Evaluation
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 max-h-60 overflow-y-auto">
+            {Object.entries(stats.per_class_metrics).map(([cls, m]) => (
+              <div key={cls} className="p-2 rounded-xl bg-slate-900/90 border border-slate-800 text-[11px] font-mono">
+                <div className="text-white font-semibold truncate">{cls}</div>
+                <div className="text-slate-400">
+                  P {(m.precision * 100).toFixed(0)}% • R {(m.recall * 100).toFixed(0)}% • F1 {(m.f1 * 100).toFixed(0)}%
+                </div>
+              </div>
+            ))}
+          </div>
+          {stats.training_history && stats.training_history.length > 0 && (
+            <div className="pt-2 border-t border-slate-800 space-y-1">
+              <div className="text-[11px] font-semibold text-indigo-300">Recent Training Run History</div>
+              {stats.training_history.slice(0, 5).map((tr) => (
+                <div key={tr.id} className="flex justify-between text-[11px] font-mono text-slate-400">
+                  <span>
+                    {tr.architecture} ({tr.sample_count} samples)
+                  </span>
+                  <span>
+                    CV {(tr.cv_accuracy * 100).toFixed(1)}% • F1 {(tr.f1_macro * 100).toFixed(1)}% • {tr.duration_ms} ms
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 

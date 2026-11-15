@@ -37,6 +37,9 @@ export const MemoryPalace: React.FC<MemoryPalaceProps> = ({ onRefreshVitals }) =
   const [relation, setRelation] = useState("loves");
   const [objectVal, setObjectVal] = useState("");
   const [category, setCategory] = useState("preference");
+  const [ttlDays, setTtlDays] = useState<number>(0);
+  const [editingMemId, setEditingMemId] = useState<string | null>(null);
+  const [editObjectVal, setEditObjectVal] = useState<string>("");
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const simNodesRef = useRef<SimNode[]>([]);
@@ -241,6 +244,7 @@ export const MemoryPalace: React.FC<MemoryPalaceProps> = ({ onRefreshVitals }) =
       object: objectVal.trim(),
       category,
       pinned: 1,
+      ttl_days: ttlDays,
     });
     setObjectVal("");
     await loadGraph();
@@ -424,9 +428,19 @@ export const MemoryPalace: React.FC<MemoryPalaceProps> = ({ onRefreshVitals }) =
               <option value="knowledge">Knowledge / Fact</option>
               <option value="project">Project</option>
             </select>
+            <select
+              value={ttlDays}
+              onChange={(e) => setTtlDays(Number(e.target.value))}
+              className="rounded-xl bg-slate-900 border border-slate-700 px-3 py-2 text-xs text-slate-200 focus:outline-none"
+            >
+              <option value={0}>No Expiration (Permanent)</option>
+              <option value={7}>Expires in 7 Days</option>
+              <option value={30}>Expires in 30 Days</option>
+              <option value={90}>Expires in 90 Days</option>
+            </select>
             <button
               type="submit"
-              className="sm:col-span-2 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-semibold text-xs py-2 transition"
+              className="rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-semibold text-xs py-2 transition"
             >
               Consolidate Into Memory Graph
             </button>
@@ -439,7 +453,7 @@ export const MemoryPalace: React.FC<MemoryPalaceProps> = ({ onRefreshVitals }) =
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-sm font-semibold text-white">
             <Sparkles className="w-4 h-4 text-cyan-400" />
-            Consolidated Semantic Memories ({graphData?.memories.length || 0})
+            User-Isolated Semantic Memories ({graphData?.memories.length || 0})
           </div>
           {graphData && graphData.memories.some((m) => m.category !== "system") && (
             <button
@@ -455,19 +469,73 @@ export const MemoryPalace: React.FC<MemoryPalaceProps> = ({ onRefreshVitals }) =
           )}
         </div>
 
-        <div className="divide-y divide-slate-800/70 max-h-72 overflow-y-auto">
+        <div className="divide-y divide-slate-800/70 max-h-80 overflow-y-auto">
           {graphData?.memories.map((m) => (
             <div key={m.id} className="py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs">
-              <div className="flex items-center gap-2 min-w-0">
+              <div className="flex flex-wrap items-center gap-2 min-w-0">
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-mono uppercase bg-slate-900 border border-slate-700 text-slate-300">
                   {m.category}
                 </span>
+                {m.verified === 0 && (
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-amber-500/20 border border-amber-400/40 text-amber-200">
+                    Pending Approval
+                  </span>
+                )}
                 <span className="text-slate-100 font-medium">{m.subject}</span>
                 <span className="font-mono text-cyan-400">→ {m.relation} →</span>
-                <span className="text-emerald-200 font-semibold">{m.object}</span>
+                {editingMemId === m.id ? (
+                  <span className="inline-flex items-center gap-1">
+                    <input
+                      type="text"
+                      value={editObjectVal}
+                      onChange={(e) => setEditObjectVal(e.target.value)}
+                      className="px-2 py-0.5 rounded bg-slate-950 border border-cyan-400 text-xs text-white"
+                    />
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        await api.patchMemoryFact(m.id, { object: editObjectVal, verified: 1 });
+                        setEditingMemId(null);
+                        await loadGraph();
+                      }}
+                      className="px-2 py-0.5 rounded bg-emerald-500 text-slate-950 text-[10px] font-bold"
+                    >
+                      Save
+                    </button>
+                  </span>
+                ) : (
+                  <span className="text-emerald-200 font-semibold">{m.object}</span>
+                )}
               </div>
               <div className="flex items-center gap-2 text-slate-400">
+                <span className="text-[10.5px] font-mono text-cyan-300/80">
+                  {Math.round((m.confidence ?? 0.9) * 100)}% conf
+                </span>
                 <span className="text-[10.5px] font-mono">recalled {m.access_count}x</span>
+                {m.verified === 0 && (
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      await api.approveMemoryFact(m.id);
+                      await loadGraph();
+                    }}
+                    className="px-2 py-0.5 rounded bg-emerald-500/20 border border-emerald-400/40 text-emerald-200 text-[10.5px] font-semibold"
+                  >
+                    Approve
+                  </button>
+                )}
+                {m.category !== "system" && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingMemId(m.id);
+                      setEditObjectVal(m.object);
+                    }}
+                    className="text-[10.5px] px-1.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300"
+                  >
+                    Edit
+                  </button>
+                )}
                 <button
                   type="button"
                   onClick={() => handleTogglePin(m)}
