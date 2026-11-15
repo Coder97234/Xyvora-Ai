@@ -93,10 +93,14 @@
 
 ---
 
-## ⏳ Queued (rate-limited, send next)
+## ⏳ Queued (Gmail quota exhausted — send next)
 
-- partner@xmg.gg — corrected XMG address
-- support@system76.com — retry after bounce
+Priority order:
+1. **Logitech reply** — draft saved in `outreach/logitech-reply-draft.md` (paste-and-send)
+2. **partner@xmg.gg** — corrected XMG address (old contact left the company)
+3. **support@system76.com** — resend; sales@ bounced
+
+Space them out, one at a time. Gmail has refused sends for several consecutive attempts, so wait a while before retrying.
 
 ## 📌 Decision: target is quality, not 500 sends
 
