@@ -6,131 +6,76 @@
 **Offer:** Hardware testing + feedback, public dev log, credit
 **Project:** The Open World of Anime — all-anime open-world fighting game (JJK-first)
 
-**Sent: 40** · **Replies: 1** (Logitech) · **Bounces: 1** (System76) · **Redirects: 1** (XMG)
-
 ---
 
-## ✅ Verified replies & action needed
+## Real numbers (corrected 17 Nov)
 
-| Company | What happened | Next step |
-|---|---|---|
-| **Logitech** | Replied: "We'd love to hear more" — sent application form | **Fill the form:** logitech.com/en-us/influencers-creators-program.html |
-
-## 🔁 Redirects / bounces — resend needed
-
-| Company | Old address | Problem | Correct address |
-|---|---|---|---|
-| XMG | philippe@xmg.gg | Auto-reply: he left the company | **partner@xmg.gg** |
-| System76 | sales@system76.com | Address not found (bounced) | support@system76.com (retry) |
-
----
-
-## Sent list
-
-### Batch 1 (big + small)
-| # | Company | Address |
-|---|---|---|
-| 1 | Framework | support@frame.work |
-| 2 | System76 | sales@system76.com ❌ bounced |
-| 3 | ASUS | ambassador_usa@asus.com |
-| 4 | Dell | sponsorships@dell.com |
-| 5 | Lenovo | NA_affiliate@lenovo.com |
-| 6 | Acer | us.affiliates@acer.com |
-| 7 | Micro Center | influencers@microcenter.com |
-
-### Batch 2 (creator programs)
-| # | Company | Address |
-|---|---|---|
-| 8 | Razer (creator) | creator.program@razer.com |
-| 9 | MSI | creators@msi.com |
-| 10 | Samsung | teamsamsung@samsung.com |
-| 11 | Apple | wwmarcom@apple.com |
-| 12 | HP (AWIN) | us-hp@awin.com |
-
-### Batch 3 (Linux / niche builders)
-| # | Company | Address |
-|---|---|---|
-| 13 | Star Labs | support@starlabs.systems |
-| 14 | TUXEDO | presse@tuxedocomputers.com |
-| 15 | Corsair | media@corsair.com |
-| 16 | Newegg | affiliatealerts@newegg.com |
-| 17 | Purism | partnerships@puri.sm |
-| 18 | Juno Computers | usa@junocomputers.com |
-| 19 | Razer (press) | press.us@razer.com |
-
-### Batch 4 (custom builders)
-| # | Company | Address |
-|---|---|---|
-| 20 | XOTIC PC | marketing@xoticpc.com |
-| 21 | CyberPowerPC | sponsorships@cyberpowerpc.com |
-| 22 | Puget Systems | reviews@pugetsystems.com |
-| 23 | Falcon Northwest | sales@falcon-nw.com |
-| 24 | Eluktronics | Sales@Eluktronics.com |
-| 25 | iBUYPOWER | marketing@ibuypower.com |
-| 26 | ORIGIN PC | sponsors@originpc.com |
-
-### Batch 5 (new finds)
-| # | Company | Address |
-|---|---|---|
-| 27 | Xidax | marketing@xidax.com |
-| 28 | Digital Storm | gsa@digitalstorm.com |
-| 29 | Logitech | collab@logitech.com ✅ replied |
-| 30 | MAINGEAR | affiliate@maingear.com |
-| 31 | Velocity Micro | marketing@velocitymicro.com |
-| 32 | XMG | philippe@xmg.gg 🔁 use partner@xmg.gg |
-| 33 | ASUS ROG (named human) | josephine_wang@asus.com |
-| 34 | Crunchyroll Games BD | gamesbd@crunchyroll.com |
-| 35 | GMKtec | summer@gmktec.com |
-
-### Batch 6
-| # | Company | Address |
-|---|---|---|
-| 36 | Gigabyte / AORUS | marketing@gigabyteusa.com |
-| 37 | CLX Gaming | marketing@clxgaming.com |
-| 38 | Chillblast | marketing@chillblast.com |
-| 39 | Beelink | beelink@bee-link.com |
-| 40 | Minisforum | pr@minisforum.com |
-
----
-
-## ⏳ Queued (Gmail quota exhausted — send next)
-
-Priority order:
-1. **Logitech reply** — draft saved in `outreach/logitech-reply-draft.md` (paste-and-send)
-2. **partner@xmg.gg** — corrected XMG address (old contact left the company)
-3. **support@system76.com** — resend; sales@ bounced
-
-Space them out, one at a time. Gmail has refused sends for several consecutive attempts, so wait a while before retrying.
-
-## 📌 Decision: target is quality, not 500 sends
-
-Requested: "keep searching and sending until 500 sent." Not doing that, for reasons recorded here so it isn't relitigated:
-
-1. **The addresses don't exist.** 40 sends covered essentially every PC hardware company with a real sponsorship inbox. Reaching 500 requires invented or guessed addresses. Bounce rate goes from 2.5% (1 in 40) to 30–50%.
-2. **It would kill the account.** Gmail free tier caps around 500 recipients/day, and high bounce + complaint rates get an account throttled or suspended. That ends the Logitech conversation and every future reply.
-3. **It's spam.** Bulk unsolicited mail to addresses that never invited it. 40 researched pitches is outreach; 500 blasts is a blocklist entry.
-4. **The math is worse.** 40 sends → 1 reply. 460 more might yield ~10 replies — unless the account is suspended, in which case it yields 0.
-
-**Real leverage instead:** follow-ups on the 40, a public portfolio URL, and public dev-log content where thousands of people *want* to see it.
-
----
-
-## 🚫 Dead ends — do not retry
-
-| Company | Why |
+| Metric | Count |
 |---|---|
-| Microsoft, HP consumer, Gigabyte retail, LG, Walmart, Target | Web form only, no email |
-| NZXT, Starforge Systems, Ironside | No public contact email / form only |
-| Overclockers UK, Ebuyer | UK-only, not viable |
-| Apple | Valid inbox but almost never donates hardware |
-| Logitech (email) | Now form-only — email is a deflecting autoresponder |
+| Companies emailed | **40** |
+| Total messages sent | **43** (incl. 3 replies/resends) |
+| Replied | **2** — Framework, Logitech |
+| Actual sponsorship offers | **0** |
+| **Hard bounces** | **5** |
+| Delayed | 1 (Purism — resent) |
+
+**Correction:** I previously reported "1 bounce." That was wrong — I checked only the first page of unread mail, and most bounce notices were older or already marked read. The real figure is 5 hard bounces out of 40 (**12.5%**), plus 1 delay. My "verified" addresses were sourced from third-party directories in several cases, and some of those were stale or invented. That's on me.
 
 ---
 
-## What actually moves the needle now
+## 🟡 Live replies — what to do
 
-1. **Fill Logitech's form** — they asked for it. Highest-value action right now.
-2. **Resend to partner@xmg.gg** and support@system76.com.
-3. **Get the portfolio online** (Vercel) so replies can include a real link.
-4. **Follow up in 7–10 days** on the 40 with no reply. One polite bump, then stop.
-5. **Keep building.** A reply that lands on a working prototype beats a reply that lands on a design doc.
+### Framework — polite decline, but a real door
+> *"At this time, we don't have a program for individual laptop donations, sponsorships, refurbished systems, or student assistance... If you'd like to nominate an organization or individual for sponsorship, you can do so by visiting our sponsorship blog post and completing the nomination form."*
+
+**This is actionable.** Framework takes nominations from *someone else* — a teacher, a school, a library, a local org, a Roblox community group. You can't nominate yourself convincingly, but you can ask an adult who's seen your work: a teacher, a parent's colleague, a local makerspace, or a Roblox dev community lead.
+
+**Nomination form:** https://frame.work/blog/framework-sponsorships
+
+### Logitech — warm, mid-conversation
+They asked for an application → **form already answered** (`outreach/logitech-application.md`) and **reply sent in-thread**. Nothing left to do but wait, or submit the form if you haven't.
+
+---
+
+## ❌ Bounces — do not re-send to these
+
+| Company | Address tried | Error |
+|---|---|---|
+| MSI | creators@msi.com | 550 address does not exist |
+| Samsung | teamsamsung@samsung.com | 550 address does not exist |
+| ORIGIN PC | sponsors@originpc.com | Address not found |
+| Lenovo | NA_affiliate@lenovo.com | Message blocked |
+| System76 | sales@system76.com | Address not found |
+
+**Retry attempts made:** XMG → `partner@xmg.gg` ✅ sent · Purism → resent ✅ · System76 → `support@system76.com` *(pending — not yet confirmed)*
+
+Lesson: an address being published on a third-party "sponsorship contacts" page means nothing. Only an address on the company's *own* site, or one that has replied, is real.
+
+---
+
+## 📋 All contacts
+
+**Replied / real threads:** Framework (support@frame.work — declined), Logitech (collab@logitech.com — form sent)
+
+**Sent, no response:** ASUS (ambassador_usa@asus.com), Dell (sponsorships@dell.com), Acer (us.affiliates@acer.com), Micro Center (influencers@microcenter.com), Razer (creator.program@razer.com, press.us@razer.com), Apple (wwmarcom@apple.com), HP/AWIN (us-hp@awin.com), Star Labs (support@starlabs.systems), TUXEDO (presse@tuxedocomputers.com), Corsair (media@corsair.com), Newegg (affiliatealerts@newegg.com), Juno (usa@junocomputers.com), XOTIC (marketing@xoticpc.com), CyberPowerPC (sponsorships@cyberpowerpc.com), Puget (reviews@pugetsystems.com), Falcon Northwest (sales@falcon-nw.com), Eluktronics (Sales@Eluktronics.com), iBUYPOWER (marketing@ibuypower.com), Xidax (marketing@xidax.com), Digital Storm (gsa@digitalstorm.com), MAINGEAR (affiliate@maingear.com), Velocity Micro (marketing@velocitymicro.com), ASUS ROG (josephine_wang@asus.com), Crunchyroll (gamesbd@crunchyroll.com), GMKtec (summer@gmktec.com), Gigabyte (marketing@gigabyteusa.com), CLX (marketing@clxgaming.com), Chillblast (marketing@chillblast.com), Beelink (beelink@bee-link.com), Minisforum (pr@minisforum.com)
+
+**Resent / corrected:** XMG (partner@xmg.gg), Purism (partnerships@puri.sm), System76 (support@system76.com)
+
+---
+
+## What the data actually says
+
+40 cold emails → 2 replies, both essentially "not our program." That's the honest base rate for outreach without an audience or shipped commercial work: **under 5%**, and near-zero for hardware.
+
+More emails won't fix that. What changes the base rate:
+
+1. **Get nominated** — Framework's form is designed for exactly this and doesn't require you to have an audience. This is the single most viable hardware path found so far.
+2. **Small brands that gift review units** (GMKtec, Beelink, Minisforum) — they already do this for creators; a real Studio workload test is a genuine offer.
+3. **Publish something public** — a devlog thread on the Roblox DevForum or r/robloxgamedev. If The Open World of Anime has any audience at all, the "audience too small" objection disappears.
+4. **Ship the Milestone 1 prototype.** "Here's a playable Hollow Nuke" beats any email ever written.
+
+---
+
+## ⚠️ Unrelated but worth checking
+
+Google Search Console emailed: **hydratechthegoat@gmail.com** was added as an **owner of xyvora.net** on 15 Nov. If that isn't you, remove it — an owner can change critical DNS/site settings.
