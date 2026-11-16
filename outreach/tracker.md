@@ -61,6 +61,8 @@ Lesson: an address being published on a third-party "sponsorship contacts" page 
 
 **Resent / corrected:** XMG (partner@xmg.gg), Purism (partnerships@puri.sm), System76 (support@system76.com)
 
+**Creator outreach:** CarterPCs — 2 emails to management (carterpcs@rakugomedia.com): a laptop request, then the story follow-up. Story saved in `outreach/story.md` for reuse.
+
 ---
 
 ## What the data actually says
